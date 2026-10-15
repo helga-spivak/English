@@ -9,4 +9,4 @@ function render(n){const arr=n===1?ex1:n===2?ex2:ex3;document.getElementById('ex
 function norm(s){return s.toLowerCase().trim().replace(/[.!?]+$/,'').replace(/\s+/g,' ').replace(/’/g,"'")}
 function check(n){const arr=n===1?ex1:n===2?ex2:ex3;const controls=document.querySelectorAll('#exercise'+n+' select,#exercise'+n+' input');let total=0;controls.forEach((el,i)=>{const val=norm(el.value),answer=norm(arr[i][1]),ok=val===answer;total+=ok?1:0;document.getElementById(`fb${n}-${i}`).innerHTML=ok?'✓ Correct':val?`✗ Correct answer: <strong>${arr[i][1]}</strong>`:'Please enter an answer.';document.getElementById(`fb${n}-${i}`).className='feedback '+(ok?'correct':'wrong');el.style.borderColor=ok?'#137a57':'#b33d46'});document.getElementById('score'+n).textContent=`Score: ${total} / ${arr.length}`}
 function reset(n){render(n)}function showHints(n){document.querySelectorAll('#exercise'+n+' .hint').forEach(e=>e.classList.toggle('visible'))}render(1);render(2);render(3);
-</script></body></html>
+</script></body></html> 

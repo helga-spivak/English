@@ -3,154 +3,78 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>English</title>
+    <title>English — Home</title>
     <style>
-      :root {
-        --bg: #0f172a;
-        --panel: #111827;
-        --panel-strong: #1f2937;
-        --text: #e5e7eb;
-        --muted: #9ca3af;
-        --accent: #60a5fa;
-        --accent-strong: #3b82f6;
-        --border: rgba(148, 163, 184, 0.2);
+      :root{
+        --bg:#0b1120;
+        --panel:#0f172a;
+        --text:#e5e7eb;
+        --muted:#9ca3af;
+        --accent:#60a5fa;
+        --card-bg:rgba(17,24,39,0.7);
+        --border:rgba(148,163,184,0.12);
       }
+      *{box-sizing:border-box}
+      body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#0b1120 0%,#111827 100%);color:var(--text);min-height:100vh}
+      .topbar{background:rgba(15,23,42,0.95);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;backdrop-filter:blur(6px)}
+      .nav{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;min-height:64px}
+      .brand{font-weight:700}
+      .container{max-width:1100px;margin:0 auto;padding:40px 24px 80px}
+      h1{margin:0 0 8px}
+      .subtitle{color:var(--muted);margin:0 0 20px}
 
-      * {
-        box-sizing: border-box;
-      }
+      .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+      .card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:20px}
+      .card h3{margin:0 0 8px;font-size:1.1rem}
+      .card p{margin:0 0 12px;color:var(--muted)}
+      .card a{color:var(--accent);text-decoration:none}
+      .empty{color:var(--muted);font-style:italic}
 
-      body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: linear-gradient(180deg, #0b1120 0%, #111827 100%);
-        color: var(--text);
-      }
+      footer{max-width:1100px;margin:40px auto;padding:0 24px;color:var(--muted)}
 
-      a {
-        color: var(--accent);
-        text-decoration: none;
-      }
-
-      a:hover {
-        text-decoration: underline;
-      }
-
-      .topbar {
-        background: rgba(15, 23, 42, 0.95);
-        border-bottom: 1px solid var(--border);
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        backdrop-filter: blur(8px);
-      }
-
-      .nav {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 24px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        min-height: 64px;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .brand {
-        font-weight: 700;
-        font-size: 1.1rem;
-        letter-spacing: 0.02em;
-      }
-
-      .menu {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        flex-wrap: wrap;
-      }
-
-      .menu a {
-        color: var(--text);
-        opacity: 0.9;
-      }
-
-      .menu a:hover {
-        opacity: 1;
-        text-decoration: none;
-      }
-
-      .container {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 48px 24px 80px;
-      }
-
-      .card {
-        background: rgba(17, 24, 39, 0.7);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 32px;
-      }
-
-      h1 {
-        margin: 0 0 12px;
-        font-size: clamp(2rem, 3vw, 3rem);
-      }
-
-      .subtitle {
-        color: var(--muted);
-        font-size: 1.05rem;
-        line-height: 1.7;
-        margin-bottom: 22px;
-      }
-
-      .section-title {
-        margin-top: 28px;
-        margin-bottom: 12px;
-        font-size: 1.2rem;
-      }
-
-      ul {
-        padding-left: 18px;
-        line-height: 1.8;
-        color: var(--text);
-      }
-
-      .meta {
-        margin-top: 12px;
-        color: var(--muted);
-        font-size: 0.95rem;
-      }
+      @media (max-width:520px){.container{padding:20px}}
     </style>
   </head>
   <body>
     <header class="topbar">
       <nav class="nav" aria-label="Main navigation">
-        <a class="brand" href="https://github.com/helga-spivak/English" target="_blank" rel="noreferrer">helga-spivak / English</a>
-        <div class="menu">
-          <a href="../README.md">README</a>
-          <a href="../LICENSE">License</a>
-          <a href="https://github.com/helga-spivak/English/issues" target="_blank" rel="noreferrer">Issues</a>
-          <a href="https://github.com/helga-spivak/English" target="_blank" rel="noreferrer">Repository</a>
-        </div>
+        <div class="brand"><a href="https://github.com/helga-spivak/English" target="_blank" rel="noreferrer" style="color:var(--text);text-decoration:none">helga-spivak / English</a></div>
       </nav>
     </header>
 
     <main class="container">
-      <section class="card">
-        <h1>English</h1>
-        <p class="subtitle">
-          A repository landing page for quick navigation to the project overview, license, and issue tracking.
-        </p>
+      <h1>Project pages</h1>
+      <p class="subtitle">Cards below link to site pages. Add more pages to the <code>docs/</code> folder and they will appear here when you update the <code>pages</code> array.</p>
 
-        <h2 class="section-title">Navigation</h2>
-        <ul>
-          <li><a href="../Over.html">Open OVER</a></li>
-        </ul>
+      <div id="grid" class="grid"></div>
 
-        <p class="meta">Repository: helga-spivak / English</p>
-      </section>
+      <p style="margin-top:18px;color:var(--muted)">To add a new page: create <code>docs/YourPage.html</code> and add an entry to the <code>pages</code> array in this index (title, href, description).</p>
     </main>
+
+    <footer>
+      <p>Repository: helga-spivak / English</p>
+    </footer>
+
+    <script>
+      // Simple list of pages shown as cards. Add more entries as you create pages in docs/.
+      const pages = [
+        {title: 'OVER — Phrasal Verb Lab', href: 'Over.html', desc: 'Interactive exercises to practice phrasal verbs with "over".'}
+        // Add more pages here: {title: 'Another', href: 'Another.html', desc: 'Short description'},
+      ];
+
+      const grid = document.getElementById('grid');
+
+      if(pages.length===0){
+        grid.innerHTML = '<div class="card empty">No pages yet. Create files in <code>docs/</code> and add them to the <code>pages</code> array.</div>';
+      } else {
+        grid.innerHTML = pages.map(p=>`
+          <article class="card">
+            <h3><a href="${p.href}">${p.title}</a></h3>
+            <p>${p.desc||''}</p>
+            <p><a href="${p.href}">Open →</a></p>
+          </article>
+        `).join('');
+      }
+    </script>
   </body>
 </html>

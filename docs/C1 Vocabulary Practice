@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>C1 Vocabulary Practice</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --ink:#1f2937; --muted:#6b7280;
+    --accent:#4f46e5; --accent-dark:#3730a3; --good:#059669; --bad:#dc2626;
+    --good-bg:#d1fae5; --bad-bg:#fee2e2; --border:#e5e7eb; --select-bg:#eef2ff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); padding:12px 12px 60px;
+  }
+  .wrap{max-width:760px; margin:0 auto;}
+  header{text-align:center; margin-bottom:14px;}
+  header h1{font-size:1.4rem; margin:6px 0 2px;}
+  header p{color:var(--muted); margin:0; font-size:.9rem;}
+  .badge{display:inline-block; background:var(--accent); color:#fff; font-size:.7rem; padding:3px 10px; border-radius:999px; letter-spacing:.03em;}
+
+  .scoreboard{
+    position:sticky; top:0; z-index:50; background:rgba(244,246,251,.95); backdrop-filter:blur(4px);
+    padding:8px 10px; border-radius:12px; margin-bottom:16px; display:flex; justify-content:space-between;
+    align-items:center; box-shadow:0 2px 8px rgba(0,0,0,.06); font-weight:600; font-size:.85rem;
+  }
+  .scoreboard span#totalScore{color:var(--accent-dark); font-size:1rem;}
+
+  .card{
+    background:var(--card); border-radius:16px; padding:16px 16px 20px; margin-bottom:20px;
+    box-shadow:0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04); border:1px solid var(--border);
+  }
+  .card h2{font-size:1.05rem; margin:0 0 4px; display:flex; align-items:center; gap:8px;}
+  .card h2 .num{
+    background:var(--accent); color:#fff; width:24px; height:24px; border-radius:50%;
+    display:inline-flex; align-items:center; justify-content:center; font-size:.8rem; flex-shrink:0;
+  }
+  .card .instructions{color:var(--muted); font-size:.85rem; margin:0 0 14px;}
+
+  button.action{
+    background:var(--accent); color:#fff; border:none; padding:9px 16px; border-radius:8px;
+    font-size:.85rem; font-weight:600; cursor:pointer; margin-top:10px;
+  }
+  button.action:active{background:var(--accent-dark);}
+  button.action:disabled{opacity:.5; cursor:default;}
+  .task-score{font-size:.8rem; font-weight:600; color:var(--muted); margin-left:8px;}
+
+  /* Task 1: matching */
+  .match-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px 10px;}
+  .match-col{display:flex; flex-direction:column; gap:8px;}
+  .match-item{
+    border:1.5px solid var(--border); border-radius:10px; padding:9px 10px; font-size:.85rem;
+    cursor:pointer; background:#fafafa; user-select:none; line-height:1.3; transition:.15s;
+  }
+  .match-item.selected{border-color:var(--accent); background:var(--select-bg);}
+  .match-item.correct{border-color:var(--good); background:var(--good-bg); color:var(--good); cursor:default;}
+  .match-item.wrong-flash{border-color:var(--bad); background:var(--bad-bg);}
+  .match-item.disabled{pointer-events:none;}
+
+  /* Task 2: gap fill */
+  .gap-item{margin-bottom:12px; font-size:.92rem; line-height:1.5;}
+  .gap-item select{
+    font-size:.85rem; padding:5px 6px; border-radius:6px; border:1.5px solid var(--border);
+    background:#fff; margin:0 3px; max-width:100%;
+  }
+  .gap-item select.correct{border-color:var(--good); background:var(--good-bg);}
+  .gap-item select.wrong{border-color:var(--bad); background:var(--bad-bg);}
+  .gap-hint{display:block; font-size:.75rem; color:var(--good); margin-top:2px;}
+
+  /* Task 3: drag and drop */
+  #bank3{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; min-height:44px;
+    padding:8px; border:1.5px dashed var(--border); border-radius:10px;}
+  .token{
+    background:var(--accent); color:#fff; padding:8px 12px; border-radius:8px; font-size:.85rem;
+    cursor:grab; touch-action:none; user-select:none; font-weight:600; box-shadow:0 1px 2px rgba(0,0,0,.15);
+  }
+  .token.placed{visibility:hidden; pointer-events:none;}
+  .token.selected{outline:3px solid #facc15;}
+  .token.dragging{position:fixed; z-index:999; opacity:.9; pointer-events:none;}
+  .dd-sentence{font-size:.92rem; line-height:1.6; margin-bottom:12px;}
+  .blank{
+    display:inline-flex; align-items:center; justify-content:center; min-width:100px; min-height:30px;
+    border:1.5px dashed var(--accent); border-radius:8px; padding:4px 8px; vertical-align:middle;
+    background:var(--select-bg); font-size:.85rem; color:var(--muted); margin:0 2px;
+  }
+  .blank.filled{color:#fff; font-weight:600; border-style:solid;}
+  .blank.correct{background:var(--good); border-color:var(--good);}
+  .blank.wrong{background:var(--bad); border-color:var(--bad);}
+  .blank.target{outline:3px solid #facc15;}
+
+  /* Task 4: find mistake */
+  .mistake-sentence{font-size:.92rem; line-height:1.9; margin-bottom:14px; padding:8px 10px; border-radius:10px; background:#fafafa; border:1.5px solid var(--border);}
+  .mistake-sentence.done{background:var(--good-bg); border-color:var(--good);}
+  .w{cursor:pointer; padding:1px 2px; border-radius:4px;}
+  .w:hover{background:#e0e7ff;}
+  .w.wrong-pick{background:var(--bad-bg); color:var(--bad); text-decoration:line-through;}
+  .w.right-pick{background:var(--good-bg); color:var(--good); font-weight:700;}
+  .correction{font-size:.8rem; color:var(--good-dark,#065f46); margin-top:4px; display:none;}
+
+  #finalCard{display:none; text-align:center;}
+  #finalCard h2{justify-content:center;}
+  #finalScore{font-size:2.2rem; font-weight:800; color:var(--accent-dark); margin:8px 0;}
+  #finalMsg{font-size:.95rem; color:var(--muted);}
+  .restart{background:#374151;}
+
+  @media (max-width:480px){
+    .match-grid{grid-template-columns:1fr 1fr; gap:6px 8px;}
+    .match-item{font-size:.78rem; padding:8px;}
+  }
+</style>
+
+<style id="site-navigation-style">
+.site-nav{
+  max-width:760px;margin:0 auto 14px;display:grid;grid-template-columns:1fr auto 1fr;
+  gap:8px;align-items:center;
+}
+.site-nav a{
+  text-decoration:none;color:#374151;background:#fff;border:1px solid #e5e7eb;
+  border-radius:10px;padding:8px 10px;font-size:.8rem;font-weight:600;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.site-nav .home{text-align:center}
+.site-nav .prev{text-align:left}
+.site-nav .next{text-align:right}
+.site-nav .empty{visibility:hidden}
+@media(max-width:480px){
+  .site-nav a{font-size:.74rem;padding:7px 8px}
+}
+</style>
+
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Topic navigation">
+  <a class='prev' href='/health-cosmetology'>← Health &amp; Cosmetology</a>
+  <a class='home' href='/'>⌂ All topics</a>
+  <a class='next' href='/architecture'>Building a Landmark →</a>
+</nav>
+
+<div class="wrap">
+  <header>
+    <span class="badge">C1 · Vocabulary</span>
+    <h1>Chants, Tension &amp; Milestones</h1>
+    <p>Practice 8 words: chants · word of mouth · shun · resented · livelihoods · tension · pursuits · milestone</p>
+  </header>
+
+  <div class="scoreboard">
+    <span>Total score</span>
+    <span><span id="totalScore">0</span> / 32</span>
+  </div>
+
+  <!-- TASK 1 -->
+  <div class="card">
+    <h2><span class="num">1</span> Match the word to its definition <span class="task-score" id="score1">0/8</span></h2>
+    <p class="instructions">Tap a word, then tap its matching definition.</p>
+    <div class="match-grid">
+      <div class="match-col" id="wordsCol"></div>
+      <div class="match-col" id="defsCol"></div>
+    </div>
+  </div>
+
+  <!-- TASK 2 -->
+  <div class="card">
+    <h2><span class="num">2</span> Gap-fill <span class="task-score" id="score2">0/8</span></h2>
+    <p class="instructions">Choose the correct word from each dropdown.</p>
+    <div id="gapList"></div>
+    <button class="action" id="checkGap">Check answers</button>
+  </div>
+
+  <!-- TASK 3 -->
+  <div class="card">
+    <h2><span class="num">3</span> Drag and drop <span class="task-score" id="score3">0/8</span></h2>
+    <p class="instructions">Drag each word into the correct blank (or tap a word, then tap a blank).</p>
+    <div id="bank3"></div>
+    <div id="dd-sentences"></div>
+    <button class="action" id="checkDD">Check answers</button>
+  </div>
+
+  <!-- TASK 4 -->
+  <div class="card">
+    <h2><span class="num">4</span> Find the mistake <span class="task-score" id="score4">0/8</span></h2>
+    <p class="instructions">Each sentence contains one wrongly used word. Tap the word you think is wrong.</p>
+    <div id="mistakeList"></div>
+  </div>
+
+  <div class="card" id="finalCard">
+    <h2>🎉 Final result</h2>
+    <div id="finalScore">0 / 32</div>
+    <div id="finalMsg"></div>
+    <button class="action restart" onclick="location.reload()">Try again</button>
+  </div>
+</div>
+
+<script>
+/* ---------- shared helpers ---------- */
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+const scoreState={1:0,2:0,3:0,4:0};
+function updateScore(task, val){
+  scoreState[task]=val;
+  document.getElementById('score'+task).textContent=val+'/8';
+  const total=scoreState[1]+scoreState[2]+scoreState[3]+scoreState[4];
+  document.getElementById('totalScore').textContent=total;
+  if(total===32){
+    document.getElementById('finalCard').style.display='block';
+    document.getElementById('finalScore').textContent='32 / 32';
+    document.getElementById('finalMsg').textContent='Perfect score! You have fully mastered this set.';
+    document.getElementById('finalCard').scrollIntoView({behavior:'smooth'});
+  }
+}
+
+const vocab=[
+  {word:"chants", def:"rhythmic phrases or slogans repeated loudly, often by a crowd"},
+  {word:"word of mouth", def:"the informal way information or reputation spreads from person to person"},
+  {word:"shun", def:"to deliberately avoid or stay away from someone or something"},
+  {word:"resented", def:"felt bitter or angry about something seen as unfair"},
+  {word:"livelihoods", def:"the means by which people earn enough money to live"},
+  {word:"tension", def:"a strained, uneasy atmosphere caused by unresolved conflict"},
+  {word:"pursuits", def:"activities a person spends their time on, especially for pleasure"},
+  {word:"milestone", def:"a significant event or stage in the development of something"}
+];
+
+/* ================= TASK 1 : MATCHING ================= */
+(function(){
+  const words=shuffle(vocab.map(v=>v.word));
+  const defs=shuffle(vocab.map(v=>v.def));
+  const wordsCol=document.getElementById('wordsCol');
+  const defsCol=document.getElementById('defsCol');
+  let selectedWord=null, selectedWordEl=null, matched=0;
+
+  words.forEach(w=>{
+    const el=document.createElement('div');
+    el.className='match-item'; el.textContent=w; el.dataset.word=w;
+    el.addEventListener('click',()=>{
+      if(el.classList.contains('correct'))return;
+      document.querySelectorAll('#wordsCol .match-item').forEach(x=>x.classList.remove('selected'));
+      el.classList.add('selected'); selectedWord=w; selectedWordEl=el;
+    });
+    wordsCol.appendChild(el);
+  });
+
+  defs.forEach(d=>{
+    const el=document.createElement('div');
+    el.className='match-item'; el.textContent=d; el.dataset.def=d;
+    el.addEventListener('click',()=>{
+      if(el.classList.contains('correct') || !selectedWord)return;
+      const correctDef=vocab.find(v=>v.word===selectedWord).def;
+      if(d===correctDef){
+        el.classList.add('correct'); el.classList.remove('selected');
+        selectedWordEl.classList.add('correct'); selectedWordEl.classList.remove('selected');
+        matched++; updateScore(1,matched);
+        selectedWord=null; selectedWordEl=null;
+      } else {
+        el.classList.add('wrong-flash');
+        setTimeout(()=>el.classList.remove('wrong-flash'),450);
+      }
+    });
+    defsCol.appendChild(el);
+  });
+})();
+
+/* ================= TASK 2 : GAP FILL ================= */
+(function(){
+  const sentences=[
+    {text:"The protesters marched through the square, their {b} growing louder with every step.", answer:"chants"},
+    {text:"The little café never advertised; its loyal customer base grew purely through {b}.", answer:"word of mouth"},
+    {text:"After the betrayal became public, several former friends chose to {b} him completely.", answer:"shun"},
+    {text:"Some employees {b} the new dress code, feeling it was unnecessarily strict.", answer:"resented"},
+    {text:"The proposed dam would flood the valley, destroying the {b} of hundreds of farming families.", answer:"livelihoods"},
+    {text:"Ever since the merger was announced, there's been noticeable {b} between the two teams.", answer:"tension"},
+    {text:"Outside the office, he devotes his evenings to creative {b} such as sculpture and photography.", answer:"pursuits"},
+    {text:"Landing its first major client was a real {b} for the young start-up.", answer:"milestone"}
+  ];
+  const container=document.getElementById('gapList');
+  const selects=[];
+
+  sentences.forEach((s,i)=>{
+    const wrong=shuffle(vocab.map(v=>v.word).filter(w=>w!==s.answer)).slice(0,3);
+    const options=shuffle([s.answer,...wrong]);
+    const div=document.createElement('div');
+    div.className='gap-item';
+    const [before,after]=s.text.split('{b}');
+    const select=document.createElement('select');
+    select.id='gap'+i;
+    select.innerHTML='<option value="">— choose —</option>'+options.map(o=>`<option value="${o}">${o}</option>`).join('');
+    div.appendChild(document.createTextNode(before));
+    div.appendChild(select);
+    div.appendChild(document.createTextNode(after));
+    const hint=document.createElement('span');
+    hint.className='gap-hint'; hint.style.display='none';
+    div.appendChild(hint);
+    container.appendChild(div);
+    selects.push({select,answer:s.answer,hint});
+  });
+
+  document.getElementById('checkGap').addEventListener('click',()=>{
+    let correct=0;
+    selects.forEach(o=>{
+      o.select.classList.remove('correct','wrong');
+      if(o.select.value===o.answer){
+        o.select.classList.add('correct'); correct++;
+        o.hint.style.display='none';
+      } else {
+        o.select.classList.add('wrong');
+        o.hint.textContent='Correct answer: '+o.answer;
+        o.hint.style.display='block';
+      }
+    });
+    updateScore(2,correct);
+  });
+})();
+
+/* ================= TASK 3 : DRAG & DROP ================= */
+(function(){
+  const items=[
+    {text:"Political {b} mounted steadily between the two rival factions after the announcement.", answer:"tension"},
+    {text:"He was completely {b} by his former colleagues once the truth came out.", answer:"shun"},
+    {text:"She deeply {b} being passed over for promotion three years in a row.", answer:"resented"},
+    {text:"News of the bakery's secret recipe spread rapidly by {b}.", answer:"word of mouth"},
+    {text:"Local {b} in the coastal village depend almost entirely on fishing.", answer:"livelihoods"},
+    {text:"The stadium erupted with rhythmic {b} as the home team took the field.", answer:"chants"},
+    {text:"Her graduation was a proud {b} that the whole family celebrated.", answer:"milestone"},
+    {text:"He spends most weekends on outdoor {b} like climbing and kayaking.", answer:"pursuits"}
+  ];
+  // note: "shun" used as base form target word is "shun" but sentence needs "shunned" -> use word bank label distinct from vocab list, ok to diverge slightly for naturalness
+  items[1].answer="shunned";
+
+  const bank=document.getElementById('bank3');
+  const sentWrap=document.getElementById('dd-sentences');
+  const tokenWords=shuffle(items.map(it=>it.answer));
+  const tokenEls={};
+  let selectedToken=null;
+
+  tokenWords.forEach(w=>{
+    const t=document.createElement('div');
+    t.className='token'; t.textContent=w; t.dataset.word=w;
+    t.addEventListener('click',()=>{
+      if(t.classList.contains('placed'))return;
+      document.querySelectorAll('.token').forEach(x=>x.classList.remove('selected'));
+      t.classList.add('selected'); selectedToken=t;
+    });
+    bank.appendChild(t);
+    tokenEls[w]=t;
+  });
+
+  const blanks=[];
+  items.forEach((it,i)=>{
+    const div=document.createElement('div');
+    div.className='dd-sentence';
+    const [before,after]=it.text.split('{b}');
+    const blank=document.createElement('span');
+    blank.className='blank'; blank.dataset.answer=it.answer; blank.dataset.idx=i;
+    blank.textContent='drop here';
+    blank.addEventListener('click',()=>{
+      if(!selectedToken || blank.classList.contains('filled'))return;
+      placeToken(selectedToken, blank);
+    });
+    div.appendChild(document.createTextNode(before));
+    div.appendChild(blank);
+    div.appendChild(document.createTextNode(after));
+    sentWrap.appendChild(div);
+    blanks.push(blank);
+  });
+
+  function placeToken(token, blank){
+    // if blank already has a token, return it to bank
+    if(blank.dataset.current){
+      const prev=tokenEls[blank.dataset.current];
+      prev.classList.remove('placed');
+    }
+    blank.textContent=token.dataset.word;
+    blank.classList.add('filled');
+    blank.dataset.current=token.dataset.word;
+    token.classList.add('placed'); token.classList.remove('selected');
+    selectedToken=null;
+  }
+
+  // Pointer-based drag
+  let dragEl=null, dragWord=null, offsetX=0, offsetY=0;
+  bank.addEventListener('pointerdown', startDrag);
+  function startDrag(e){
+    const t=e.target.closest('.token');
+    if(!t || t.classList.contains('placed'))return;
+    dragWord=t.dataset.word;
+    dragEl=t.cloneNode(true);
+    dragEl.classList.add('dragging');
+    document.body.appendChild(dragEl);
+    const rect=t.getBoundingClientRect();
+    offsetX=e.clientX-rect.left; offsetY=e.clientY-rect.top;
+    moveDrag(e);
+    document.addEventListener('pointermove', moveDrag);
+    document.addEventListener('pointerup', endDrag);
+  }
+  function moveDrag(e){
+    if(!dragEl)return;
+    dragEl.style.left=(e.clientX-offsetX)+'px';
+    dragEl.style.top=(e.clientY-offsetY)+'px';
+    blanks.forEach(b=>b.classList.remove('target'));
+    const el=document.elementFromPoint(e.clientX,e.clientY);
+    const blank=el && el.closest ? el.closest('.blank') : null;
+    if(blank && !blank.classList.contains('filled')) blank.classList.add('target');
+  }
+  function endDrag(e){
+    document.removeEventListener('pointermove', moveDrag);
+    document.removeEventListener('pointerup', endDrag);
+    if(!dragEl)return;
+    const el=document.elementFromPoint(e.clientX,e.clientY);
+    const blank=el && el.closest ? el.closest('.blank') : null;
+    if(blank && !blank.classList.contains('filled')){
+      placeToken(tokenEls[dragWord], blank);
+    }
+    blanks.forEach(b=>b.classList.remove('target'));
+    dragEl.remove(); dragEl=null; dragWord=null;
+  }
+
+  document.getElementById('checkDD').addEventListener('click',()=>{
+    let correct=0;
+    blanks.forEach(b=>{
+      b.classList.remove('correct','wrong');
+      if(b.dataset.current===b.dataset.answer){
+        b.classList.add('correct'); correct++;
+      } else {
+        b.classList.add('wrong');
+      }
+    });
+    updateScore(3,correct);
+  });
+})();
+
+/* ================= TASK 4 : FIND THE MISTAKE ================= */
+(function(){
+  const items=[
+    {text:"The stadium echoed with the crowd's tension as the final whistle blew.", wrong:"tension", correct:"chants"},
+    {text:"The bakery's fame spread almost entirely by word of ear.", wrong:"ear", correct:"mouth"},
+    {text:"After the argument, she completely resented her best friend, refusing to speak to her for months.", wrong:"resented", correct:"shunned"},
+    {text:"He deeply shunned never being recognized for his years of hard work.", wrong:"shunned", correct:"resented"},
+    {text:"The new trade regulations threatened the milestones of thousands of small farmers.", wrong:"milestones", correct:"livelihoods"},
+    {text:"A quiet pursuit has been building between the two neighbouring countries over the border dispute.", wrong:"pursuit", correct:"tension"},
+    {text:"Gardening and chess are among her favourite livelihoods.", wrong:"livelihoods", correct:"pursuits"},
+    {text:"Turning forty felt like an unexpected chant in her life.", wrong:"chant", correct:"milestone"}
+  ];
+  const container=document.getElementById('mistakeList');
+  let solved=0;
+
+  items.forEach((it,i)=>{
+    const div=document.createElement('div');
+    div.className='mistake-sentence';
+    const words=it.text.split(' ');
+    let solvedThis=false;
+    words.forEach(rawWord=>{
+      const clean=rawWord.replace(/[.,!?]/g,'').toLowerCase();
+      const span=document.createElement('span');
+      span.className='w'; span.textContent=rawWord+' ';
+      span.addEventListener('click',()=>{
+        if(solvedThis)return;
+        if(clean===it.wrong.toLowerCase()){
+          span.classList.add('right-pick');
+          const corr=document.createElement('div');
+          corr.className='correction';
+          corr.style.display='block';
+          corr.textContent='✓ Correct word: "'+it.correct+'"';
+          div.appendChild(corr);
+          div.classList.add('done');
+          solvedThis=true; solved++; updateScore(4,solved);
+        } else {
+          span.classList.add('wrong-pick');
+          setTimeout(()=>span.classList.remove('wrong-pick'),450);
+        }
+      });
+      div.appendChild(span);
+    });
+    container.appendChild(div);
+  });
+})();
+</script>
+</body>
+</html>
+<script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="6ff31f93-ef5d-46c9-9e44-b1d75df694ca" data-app-host="app.netlify.com"></script>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>OVER — Phrasal Verb Lab</title>
+    <style>
+      :root{--bg:#f5f3ee;--ink:#10222b;--muted:#6b7280;--accent:#2563eb}
+      body{font-family:Arial,Helvetica,sans-serif;margin:0;background:var(--bg);color:var(--ink);padding:24px}
+      .card{background:#fff;border-radius:10px;padding:20px;box-shadow:0 6px 18px rgba(16,34,43,0.08);max-width:820px;margin:16px auto}
+      h1{margin:0 0 12px}
+      .chip{display:inline-block;background:#e6eefc;color:var(--accent);padding:6px 10px;border-radius:999px;margin:6px 6px 0 0;font-size:0.95rem}
+      .bank{margin-top:12px}
+      .exercise{margin-top:14px}
+      select,input{padding:6px;border:1px solid #ddd;border-radius:6px}
+      .controls{margin-top:12px}
+      .hint{color:var(--muted);font-size:0.95rem}
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>OVER — Phrasal Verb Lab</h1>
+      <p class="subtitle">Interactive exercises to practice phrasal verbs with "over".</p>
+
+      <div id="chips" class="bank" aria-hidden="true"></div>
+
+      <section class="exercise" id="exercise1"></section>
+      <section class="exercise" id="exercise2"></section>
+      <section class="exercise" id="exercise3"></section>
+
+      <div class="controls">
+        <button onclick="check(1)">Check set 1</button>
+        <button onclick="check(2)">Check set 2</button>
+        <button onclick="check(3)">Check set 3</button>
+        <button onclick="reset(1)">Reset</button>
+        <button onclick="showHints(1)">Hints</button>
+      </div>
+    </div>
+
+    <script>
+const verbs=['stay over','come over','do over','start over','take over','hand over','go over','think over','be over','get over'];
+const meanings=['sleep at someone\u2019s place','visit someone at their home','do something again','begin again from the beginning','gain control or responsibility','give something to another person','review or examine','consider carefully','end','recover from something'];
+const ex1=[['Could you ___ the report with me before I send it?','go over'],['Would you like to ___ on Saturday? We can cook dinner.','come over'],['When the manager retires, her deputy will ___ the role.','take over']];
+const ex2=[['After the acquisition, a new director ______ the department.','took over','Past simple: assume responsibility'],['I can\u2019t decide today. I need to ______ the proposal.','think over','Consideration']];
+const ex3=[['I need to <b>consider your suggestion carefully</b>. → I need to ______ your suggestion.','think over','Consider'],['Let\'s <b>review the figures</b> before the meeting. → Let\'s ______ the figures.','go over','Review']];
+
+document.getElementById('chips').innerHTML=verbs.map(v=>`<span class="chip">${v}</span>`).join('');
+
+function render(n){const arr=n===1?ex1:n===2?ex2:ex3;document.getElementById('exercise'+n).innerHTML=arr.map((item,i)=>{let q=item[0];if(n===1){q=q.replace('___',`<select aria-label="Question ${i+1}">${verbs.map(v=>`<option value="${v}">${v}</option>`).join('')}</select>`)}else{q=q.replace('______',`<input aria-label="Question ${i+1}" />`)}return `<div class=card style="margin:10px 0;padding:12px"><p>${q}</p><p class=hint style="display:none">${item[2]||''}</p></div>`}).join('')}
+function norm(s){return String(s||'').toLowerCase().trim().replace(/[.!?]+$/,'').replace(/\s+/g,' ').replace(/’/g,"'")}
+function check(n){const arr=n===1?ex1:n===2?ex2:ex3;const controls=document.querySelectorAll('#exercise'+n+' select,#exercise'+n+' input');controls.forEach((el,i)=>{const val=norm(el.value);const ok=norm(arr[i][1]);el.style.borderColor=val===ok?'#10b981':'#ef4444'});}
+function reset(n){render(n)}
+function showHints(n){document.querySelectorAll('#exercise'+n+' .hint').forEach(e=>e.style.display=e.style.display==='none'?'block':'none')}
+render(1);render(2);render(3);
+    </script>
+  </body>
+</html>

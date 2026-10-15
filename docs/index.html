@@ -1,84 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>English — Home</title>
-    <style>
-      :root{
-        --bg:#0b1120;
-        --panel:#0f172a;
-        --text:#e5e7eb;
-        --muted:#9ca3af;
-        --accent:#60a5fa;
-        --card-bg:rgba(17,24,39,0.7);
-        --border:rgba(148,163,184,0.12);
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>English — Home</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px;
+      background: #f4f6f8;
+      font-family: Arial, sans-serif;
+      color: #222;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .header {
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 42px;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      color: #666;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      display: block;
+      background: white;
+      border-radius: 18px;
+      padding: 28px;
+      text-decoration: none;
+      color: #222;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      line-height: 1.35;
+    }
+
+    .card-text {
+      color: #666;
+      line-height: 1.5;
+      font-size: 16px;
+    }
+
+    .empty {
+      color: #888;
+      font-style: italic;
+    }
+
+    .footer {
+      margin-top: 60px;
+      color: #888;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .footer a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 24px;
       }
-      *{box-sizing:border-box}
-      body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#0b1120 0%,#111827 100%);color:var(--text);min-height:100vh}
-      .topbar{background:rgba(15,23,42,0.95);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;backdrop-filter:blur(6px)}
-      .nav{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;min-height:64px}
-      .brand{font-weight:700}
-      .container{max-width:1100px;margin:0 auto;padding:40px 24px 80px}
-      h1{margin:0 0 8px}
-      .subtitle{color:var(--muted);margin:0 0 20px}
 
-      .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
-      .card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:20px}
-      .card h3{margin:0 0 8px;font-size:1.1rem}
-      .card p{margin:0 0 12px;color:var(--muted)}
-      .card a{color:var(--accent);text-decoration:none}
-      .empty{color:var(--muted);font-style:italic}
-
-      footer{max-width:1100px;margin:40px auto;padding:0 24px;color:var(--muted)}
-
-      @media (max-width:520px){.container{padding:20px}}
-    </style>
-  </head>
-  <body>
-    <header class="topbar">
-      <nav class="nav" aria-label="Main navigation">
-        <div class="brand"><a href="https://github.com/helga-spivak/English" target="_blank" rel="noreferrer" style="color:var(--text);text-decoration:none">helga-spivak / English</a></div>
-      </nav>
-    </header>
-
-    <main class="container">
-      <h1>Project pages</h1>
-      <p class="subtitle">Cards below link to site pages. Add more pages to the <code>docs/</code> folder and they will appear here when you update the <code>pages</code> array.</p>
-
-      <div id="grid" class="grid"></div>
-
-      <p style="margin-top:18px;color:var(--muted)">To add a new page: create <code>docs/YourPage.html</code> and add an entry to the <code>pages</code> array in this index (title, href, description).</p>
-    </main>
-
-    <footer>
-      <p>Repository: helga-spivak / English</p>
-    </footer>
-
-    <script>
-      // Simple list of pages shown as cards. Add more entries as you create pages in docs/.
-      const pages = [
-        {title: 'OVER — Phrasal Verb Lab', href: 'Over.html', desc: 'Interactive exercises to practice phrasal verbs with "over".'},
-        {title: 'B2+ Vocabulary Practice — Building a Landmark', href: 'vocab_b2plus_exercise.html', desc: 'Short description'},
-        {title: 'С1+ Vocabulary Practice — Building a Landmark', href: 'vocab_c1_exercise.html', desc: 'Short description'},
-        {title: 'C1 Vocabulary Practice', href: 'c1_practice', desc: '".'},
-        {title: 'B2+ Vocabulary Practice — Travelling with Kids', href: 'b2_travellingWithKids.html', desc: 'Short description'},
-        {title: 'B2+ Vocabulary Practice — Biology', href: 'b2_travellingWithKids.html', desc: 'Short description'},
-      ];
-
-      const grid = document.getElementById('grid');
-
-      if(pages.length===0){
-        grid.innerHTML = '<div class="card empty">No pages yet. Create files in <code>docs/</code> and add them to the <code>pages</code> array.</div>';
-      } else {
-        grid.innerHTML = pages.map(p=>`
-          <article class="card">
-            <h3><a href="${p.href}">${p.title}</a></h3>
-            <p>${p.desc||''}</p>
-            <p><a href="${p.href}">Open →</a></p>
-          </article>
-        `).join('');
+      h1 {
+        font-size: 34px;
       }
-    </script>
-  </body>
+
+      .cards {
+        gap: 18px;
+      }
+
+      .card {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="header">
+      <h1>English Practice</h1>
+
+      <p class="subtitle">
+        Interactive English exercises, vocabulary practice
+        and learning materials
+      </p>
+    </div>
+
+    <div id="grid" class="cards"></div>
+
+    <div class="footer">
+      GitHub Pages •
+      <a href="https://github.com/helga-spivak/English"
+         target="_blank"
+         rel="noopener noreferrer">
+        English Project
+      </a>
+    </div>
+
+  </div>
+
+  <script>
+    // Add new pages to this array.
+    const pages = [
+      {
+        title: 'OVER — Phrasal Verb Lab',
+        href: 'Over.html',
+        desc: 'Interactive exercises to practice phrasal verbs with "over".'
+      },
+      {
+        title: 'B2+ Vocabulary Practice — Building a Landmark',
+        href: 'vocab_b2plus_exercise.html',
+        desc: 'Vocabulary exercises for B2+ English learners.'
+      },
+      {
+        title: 'C1+ Vocabulary Practice — Building a Landmark',
+        href: 'vocab_c1_exercise.html',
+        desc: 'Advanced vocabulary exercises for C1+ English learners.'
+      },
+      {
+        title: 'C1 Vocabulary Practice',
+        href: 'c1_practice',
+        desc: 'Interactive vocabulary practice for C1 level.'
+      },
+      {
+        title: 'B2+ Vocabulary Practice — Travelling with Kids',
+        href: 'b2_travellingWithKids.html',
+        desc: 'Vocabulary exercises about travelling with kids.'
+      },
+      {
+        title: 'B2+ Vocabulary Practice — Biology',
+        href: 'b2_travellingWithKids.html',
+        desc: 'Vocabulary exercises related to biology.'
+      }
+    ];
+
+    const grid = document.getElementById('grid');
+
+    if (pages.length === 0) {
+      grid.innerHTML = `
+        <div class="card empty">
+          No pages yet.
+        </div>
+      `;
+    } else {
+      grid.innerHTML = pages.map(page => `
+        <a class="card" href="${page.href}">
+          <div class="card-title">
+            ${page.title}
+          </div>
+          <div class="card-text">
+            ${page.desc || ''}
+          </div>
+        </a>
+      `).join('');
+    }
+  </script>
+</body>
 </html>

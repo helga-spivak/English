@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=6ff31f93-ef5d-46c9-9e44-b1d75df694ca
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>B2+ Vocabulary Practice — Building a Landmark</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --ink:#1f2937; --muted:#6b7280;
+    --accent:#0f766e; --accent-dark:#0b5a54; --good:#059669; --bad:#dc2626;
+    --good-bg:#d1fae5; --bad-bg:#fee2e2; --border:#e5e7eb; --select-bg:#e6f6f4;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); padding:12px 12px 60px;
+  }
+  .wrap{max-width:760px; margin:0 auto;}
+  header{text-align:center; margin-bottom:14px;}
+  header h1{font-size:1.35rem; margin:6px 0 2px;}
+  header p{color:var(--muted); margin:0; font-size:.88rem;}
+  .badge{display:inline-block; background:var(--accent); color:#fff; font-size:.7rem; padding:3px 10px; border-radius:999px; letter-spacing:.03em;}
+
+  .scoreboard{
+    position:sticky; top:0; z-index:50; background:rgba(244,246,251,.95); backdrop-filter:blur(4px);
+    padding:8px 10px; border-radius:12px; margin-bottom:16px; display:flex; justify-content:space-between;
+    align-items:center; box-shadow:0 2px 8px rgba(0,0,0,.06); font-weight:600; font-size:.85rem;
+  }
+  .scoreboard span#totalScore{color:var(--accent-dark); font-size:1rem;}
+
+  .card{
+    background:var(--card); border-radius:16px; padding:16px 16px 20px; margin-bottom:20px;
+    box-shadow:0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04); border:1px solid var(--border);
+  }
+  .card h2{font-size:1.02rem; margin:0 0 4px; display:flex; align-items:center; gap:8px;}
+  .card h2 .num{
+    background:var(--accent); color:#fff; width:24px; height:24px; border-radius:50%;
+    display:inline-flex; align-items:center; justify-content:center; font-size:.8rem; flex-shrink:0;
+  }
+  .card .instructions{color:var(--muted); font-size:.85rem; margin:0 0 14px;}
+
+  button.action{
+    background:var(--accent); color:#fff; border:none; padding:9px 16px; border-radius:8px;
+    font-size:.85rem; font-weight:600; cursor:pointer; margin-top:10px;
+  }
+  button.action:active{background:var(--accent-dark);}
+  .task-score{font-size:.8rem; font-weight:600; color:var(--muted); margin-left:8px;}
+
+  /* Task 1 */
+  .match-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px 10px;}
+  .match-col{display:flex; flex-direction:column; gap:8px;}
+  .match-item{
+    border:1.5px solid var(--border); border-radius:10px; padding:9px 10px; font-size:.85rem;
+    cursor:pointer; background:#fafafa; user-select:none; line-height:1.3; transition:background .15s,border-color .15s;
+  }
+  .match-item.selected{border-color:var(--accent); background:var(--select-bg);}
+  .match-item.correct{border-color:var(--good); background:var(--good-bg); color:var(--good); cursor:default;}
+  .match-item.wrong-flash{border-color:var(--bad); background:var(--bad-bg);}
+
+  /* Task 2 */
+  .gap-item{margin-bottom:12px; font-size:.92rem; line-height:1.5;}
+  .gap-item select{
+    font-size:.85rem; padding:5px 6px; border-radius:6px; border:1.5px solid var(--border);
+    background:#fff; margin:0 3px; max-width:100%;
+  }
+  .gap-item select.correct{border-color:var(--good); background:var(--good-bg);}
+  .gap-item select.wrong{border-color:var(--bad); background:var(--bad-bg);}
+  .gap-hint{display:block; font-size:.75rem; color:var(--good); margin-top:2px;}
+
+  /* Task 3 */
+  #bank3{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; min-height:44px;
+    padding:8px; border:1.5px dashed var(--border); border-radius:10px;}
+  .token{
+    background:var(--accent); color:#fff; padding:8px 12px; border-radius:8px; font-size:.85rem;
+    cursor:grab; touch-action:none; user-select:none; font-weight:600; box-shadow:0 1px 2px rgba(0,0,0,.15);
+  }
+  .token.placed{visibility:hidden; pointer-events:none;}
+  .token.selected{outline:3px solid #facc15;}
+  .token.dragging{position:fixed; z-index:999; opacity:.9; pointer-events:none;}
+  .dd-sentence{font-size:.92rem; line-height:1.6; margin-bottom:12px;}
+  .blank{
+    display:inline-flex; align-items:center; justify-content:center; min-width:100px; min-height:30px;
+    border:1.5px dashed var(--accent); border-radius:8px; padding:4px 8px; vertical-align:middle;
+    background:var(--select-bg); font-size:.85rem; color:var(--muted); margin:0 2px;
+  }
+  .blank.filled{color:#fff; font-weight:600; border-style:solid;}
+  .blank.correct{background:var(--good); border-color:var(--good);}
+  .blank.wrong{background:var(--bad); border-color:var(--bad);}
+  .blank.target{outline:3px solid #facc15;}
+
+  /* Task 4 */
+  .mistake-sentence{font-size:.92rem; line-height:1.9; margin-bottom:14px; padding:8px 10px; border-radius:10px; background:#fafafa; border:1.5px solid var(--border);}
+  .mistake-sentence.done{background:var(--good-bg); border-color:var(--good);}
+  .w{cursor:pointer; padding:1px 2px; border-radius:4px;}
+  .w:hover{background:#ccfbf1;}
+  .w.wrong-pick{background:var(--bad-bg); color:var(--bad); text-decoration:line-through;}
+  .w.right-pick{background:var(--good-bg); color:var(--good); font-weight:700;}
+  .correction{font-size:.8rem; color:#065f46; margin-top:4px; display:none;}
+
+  #finalCard{display:none; text-align:center;}
+  #finalCard h2{justify-content:center;}
+  #finalScore{font-size:2.2rem; font-weight:800; color:var(--accent-dark); margin:8px 0;}
+  #finalMsg{font-size:.95rem; color:var(--muted);}
+  .restart{background:#374151;}
+
+  @media (max-width:480px){
+    .match-item{font-size:.78rem; padding:8px;}
+  }
+</style>
+
+<style id="site-navigation-style">
+.site-nav{
+  max-width:760px;margin:0 auto 14px;display:grid;grid-template-columns:1fr auto 1fr;
+  gap:8px;align-items:center;
+}
+.site-nav a{
+  text-decoration:none;color:#374151;background:#fff;border:1px solid #e5e7eb;
+  border-radius:10px;padding:8px 10px;font-size:.8rem;font-weight:600;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.site-nav .home{text-align:center}
+.site-nav .prev{text-align:left}
+.site-nav .next{text-align:right}
+.site-nav .empty{visibility:hidden}
+@media(max-width:480px){
+  .site-nav a{font-size:.74rem;padding:7px 8px}
+}
+</style>
+
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Topic navigation">
+  <a class='prev' href='/gen-z-ai'>← Gen Z Against AI</a>
+  <a class='home' href='/'>⌂ All topics</a>
+  <a class="next empty" href="#">Next →</a>
+</nav>
+
+<div class="wrap">
+  <header>
+    <span class="badge">B2+ · Vocabulary</span>
+    <h1>Building a Landmark</h1>
+    <p>8 words drawn at random each time you load the page — reload for a fresh set.</p>
+  </header>
+
+  <div class="scoreboard">
+    <span>Total score</span>
+    <span><span id="totalScore">0</span> / 32</span>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">1</span> Match the word to its definition <span class="task-score" id="score1">0/8</span></h2>
+    <p class="instructions">Tap a word, then tap its matching definition. Matched pairs jump to the top.</p>
+    <div class="match-grid">
+      <div class="match-col" id="wordsCol"></div>
+      <div class="match-col" id="defsCol"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">2</span> Gap-fill <span class="task-score" id="score2">0/8</span></h2>
+    <p class="instructions">Choose the correct word from each dropdown.</p>
+    <div id="gapList"></div>
+    <button class="action" id="checkGap">Check answers</button>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">3</span> Drag and drop <span class="task-score" id="score3">0/8</span></h2>
+    <p class="instructions">Drag each word into the correct blank (or tap a word, then tap a blank).</p>
+    <div id="bank3"></div>
+    <div id="dd-sentences"></div>
+    <button class="action" id="checkDD">Check answers</button>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">4</span> Find the mistake <span class="task-score" id="score4">0/8</span></h2>
+    <p class="instructions">Each sentence contains one wrongly used word. Tap the word you think is wrong.</p>
+    <div id="mistakeList"></div>
+  </div>
+
+  <div class="card" id="finalCard">
+    <h2>🎉 Final result</h2>
+    <div id="finalScore">0 / 32</div>
+    <div id="finalMsg"></div>
+    <button class="action restart" onclick="location.reload()">Try a new set of 8 words</button>
+  </div>
+</div>
+
+<script>
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+const scoreState={1:0,2:0,3:0,4:0};
+function updateScore(task, val){
+  scoreState[task]=val;
+  document.getElementById('score'+task).textContent=val+'/8';
+  const total=scoreState[1]+scoreState[2]+scoreState[3]+scoreState[4];
+  document.getElementById('totalScore').textContent=total;
+  if(total===32){
+    document.getElementById('finalCard').style.display='block';
+    document.getElementById('finalScore').textContent='32 / 32';
+    document.getElementById('finalMsg').textContent='Perfect score! You have fully mastered this set.';
+    document.getElementById('finalCard').scrollIntoView({behavior:'smooth'});
+  }
+}
+
+/* ---------- full 22-word pool ---------- */
+const POOL=[
+  {w:"lime", def:"a white powdery substance made by heating limestone, used with sand and water to make mortar or plaster",
+   gap:"Workers mixed {b} with sand and water to make a strong mortar for the stone blocks.",
+   dd:"The builders used hydraulic {b}, which hardens even when wet.",
+   mistake:"Workers mixed marble with sand and water to make a strong mortar for the stone blocks.", wrong:"marble"},
+  {w:"mixture", def:"a substance made by combining two or more different things",
+   gap:"The final {b} of lime, sand and volcanic ash created an extremely durable mortar.",
+   dd:"Engineers tested several {b} ratios before settling on the final recipe.",
+   mistake:"The final pile of lime, sand and volcanic ash created an extremely durable mortar.", wrong:"pile"},
+  {w:"volcanic ash", def:"fine powdery rock and mineral fragments thrown out by an erupting volcano",
+   gap:"Engineers imported {b} from Italy because it reacted chemically with lime to form waterproof mortar.",
+   dd:"Mixed with lime, {b} produced a mortar strong enough to withstand crashing waves.",
+   mistake:"Engineers imported quarry from Italy because it reacted chemically with lime to form waterproof mortar.", wrong:"quarry"},
+  {w:"marble", def:"a hard, decorative stone, often white or veined, used in sculpture and building",
+   gap:"The monument's façade was covered in polished {b} imported from a famous quarry.",
+   dd:"Sculptors preferred {b} because it could be carved into fine detail and polished to a shine.",
+   mistake:"The monument's façade was covered in polished lime imported from a famous quarry.", wrong:"lime"},
+  {w:"fir cone", def:"the woody, cone-shaped seed case of a fir tree",
+   gap:"The architect topped the tower with a stone ornament shaped like a {b}, inspired by the trees on the cliff.",
+   dd:"The tower's stone finial was carved in the shape of a {b} for extra strength.",
+   mistake:"The architect topped the tower with a stone ornament shaped like a beacon, inspired by the trees on the cliff.", wrong:"beacon"},
+  {w:"plaque", def:"a flat piece of metal, stone or ceramic fixed to a wall, usually bearing an inscription",
+   gap:"A commemorative {b} was mounted beside the entrance to mark the building's completion.",
+   dd:"Visitors paused to read the {b} that listed the names of the original builders.",
+   mistake:"A commemorative lantern was mounted beside the entrance to mark the building's completion.", wrong:"lantern"},
+  {w:"defense", def:"the action of protecting a place or person from attack or harm",
+   gap:"The thick outer wall was built purely for {b} against enemy ships.",
+   dd:"The old fortress depended on strong natural {b}, including cliffs and reefs, to repel invaders.",
+   mistake:"The thick outer wall was built purely for fence against enemy ships.", wrong:"fence"},
+  {w:"veneration", def:"deep respect or reverence, especially for something regarded as holy",
+   gap:"The relic was treated with great {b} by pilgrims who travelled for miles to see it.",
+   dd:"The saint's tomb became an object of {b} for generations of worshippers.",
+   mistake:"The relic was treated with great faith by pilgrims who travelled for miles to see it.", wrong:"faith"},
+  {w:"sermon", def:"a talk on a religious or moral subject given during a church service",
+   gap:"The priest delivered a moving {b} about humility during Sunday service.",
+   dd:"Parishioners listened attentively as the bishop gave his {b} from the pulpit.",
+   mistake:"The priest delivered a moving veneration about humility during Sunday service.", wrong:"veneration"},
+  {w:"faith", def:"strong belief or trust, especially religious belief",
+   gap:"Despite the hardships, the villagers never lost their {b} that the chapel would be rebuilt.",
+   dd:"The small community's {b} kept the congregation together through difficult years.",
+   mistake:"Despite the hardships, the villagers never lost their sermon that the chapel would be rebuilt.", wrong:"sermon"},
+  {w:"attic", def:"the space directly under a building's roof, often used for storage",
+   gap:"Old parish records were discovered gathering dust in the church {b}.",
+   dd:"Workers converted the draughty {b} into a small storage room.",
+   mistake:"Old parish records were discovered gathering dust in the church infirmary.", wrong:"infirmary"},
+  {w:"infirmary", def:"a place, especially within an institution, where sick or injured people are treated",
+   gap:"Wounded sailors were carried straight to the ship's {b} for treatment.",
+   dd:"The abbey's {b} cared for the sick and elderly of the surrounding village.",
+   mistake:"Wounded sailors were carried straight to the ship's attic for treatment.", wrong:"attic"},
+  {w:"quarry", def:"a large open pit from which stone or minerals are dug",
+   gap:"The granite blocks were cut directly from a coastal {b} nearby.",
+   dd:"Dozens of workers hauled stone out of the {b} every day for the new building.",
+   mistake:"The granite blocks were cut directly from a coastal marble nearby.", wrong:"marble"},
+  {w:"pile", def:"a heavy post driven into the ground to support a structure's foundation",
+   gap:"Engineers drove a large wooden {b} deep into the seabed to support the tower.",
+   dd:"The tower's foundation rests on a single giant {b} sunk deep into the riverbed.",
+   mistake:"Engineers drove a large wooden fence deep into the seabed to support the tower.", wrong:"fence"},
+  {w:"lantern", def:"a case with transparent sides that houses and protects a light",
+   gap:"At the very top of the tower sat the {b} room, where the great light shone out to sea.",
+   dd:"The keeper climbed the spiral stairs each evening to light the {b}.",
+   mistake:"At the very top of the tower sat the beacon room, where the great light shone out to sea.", wrong:"beacon"},
+  {w:"attendant", def:"a person whose job is to help, serve or look after people or a place",
+   gap:"A friendly {b} showed us around the old building and answered all our questions.",
+   dd:"The lighthouse {b} lived in a small cottage beside the tower and kept the light burning.",
+   mistake:"A uniformed infirmary greeted visitors and answered questions at the entrance.", wrong:"infirmary"},
+  {w:"beacon", def:"a light or fire used to warn or guide people, especially at sea",
+   gap:"Sailors relied on the {b} atop the cliff to avoid the rocks below.",
+   dd:"During the storm, the {b} was the only visible light for miles.",
+   mistake:"Sailors relied on the lantern atop the cliff to avoid the rocks below.", wrong:"lantern"},
+  {w:"demand", def:"a strong need or request for something",
+   gap:"There was growing public {b} for a proper stone lighthouse after the old wooden one burned down.",
+   dd:"The rising {b} for safer shipping routes led to the tower's construction.",
+   mistake:"There was growing public faith for a proper stone lighthouse after the old wooden one burned down.", wrong:"faith"},
+  {w:"knelt", def:"past simple of 'kneel' — went down on one or both knees",
+   gap:"The old sailor {b} at the foot of the memorial and said a quiet prayer.",
+   dd:"As the choir sang, the whole congregation {b} in silence.",
+   mistake:"The old sailor glorified at the foot of the memorial and said a quiet prayer.", wrong:"glorified"},
+  {w:"glorify", def:"to praise or honour something greatly, sometimes making it seem better than it is",
+   gap:"The mural was designed to {b} the heroism of the shipwrecked sailors.",
+   dd:"Some historians felt the plaque tended to {b} war rather than mourn its victims.",
+   mistake:"The mural was designed to kneel the heroism of the shipwrecked sailors.", wrong:"kneel"},
+  {w:"fence", def:"a barrier, usually of wood or metal, that encloses or protects an area",
+   gap:"A low stone {b} was built around the memorial garden to keep visitors off the grass.",
+   dd:"Workers put up a temporary {b} around the site while construction was underway.",
+   mistake:"A low stone pile was built around the memorial garden to keep visitors off the grass.", wrong:"pile"},
+  {w:"dismantle", def:"to take something apart piece by piece",
+   gap:"Engineers decided to {b} the old wooden lighthouse before starting the new stone tower.",
+   dd:"It took workers several weeks to {b} the rusted scaffolding safely.",
+   mistake:"Engineers decided to defense the old wooden lighthouse before starting the new stone tower.", wrong:"defense"}
+];
+
+/* pick 8 words at random for this session, shared across all 4 tasks */
+const ACTIVE=shuffle(POOL).slice(0,8);
+
+/* ================= TASK 1 : MATCHING ================= */
+(function(){
+  const words=shuffle(ACTIVE.map(v=>v.w));
+  const defs=shuffle(ACTIVE.map(v=>v.def));
+  const wordsCol=document.getElementById('wordsCol');
+  const defsCol=document.getElementById('defsCol');
+  let selectedWord=null, selectedWordEl=null, matched=0, topOrder=0;
+
+  const wordEls={}, defEls={};
+
+  words.forEach(w=>{
+    const el=document.createElement('div');
+    el.className='match-item'; el.textContent=w; el.dataset.word=w;
+    el.addEventListener('click',()=>{
+      if(el.classList.contains('correct'))return;
+      document.querySelectorAll('#wordsCol .match-item').forEach(x=>x.classList.remove('selected'));
+      el.classList.add('selected'); selectedWord=w; selectedWordEl=el;
+    });
+    wordsCol.appendChild(el); wordEls[w]=el;
+  });
+
+  defs.forEach(d=>{
+    const el=document.createElement('div');
+    el.className='match-item'; el.textContent=d; el.dataset.def=d;
+    el.addEventListener('click',()=>{
+      if(el.classList.contains('correct') || !selectedWord)return;
+      const correctDef=ACTIVE.find(v=>v.w===selectedWord).def;
+      if(d===correctDef){
+        el.classList.add('correct'); el.classList.remove('selected');
+        selectedWordEl.classList.add('correct'); selectedWordEl.classList.remove('selected');
+        topOrder--;
+        el.style.order=topOrder; selectedWordEl.style.order=topOrder;
+        wordsCol.prepend(selectedWordEl); defsCol.prepend(el);
+        matched++; updateScore(1,matched);
+        selectedWord=null; selectedWordEl=null;
+      } else {
+        el.classList.add('wrong-flash');
+        setTimeout(()=>el.classList.remove('wrong-flash'),450);
+      }
+    });
+    defsCol.appendChild(el); defEls[d]=el;
+  });
+})();
+
+/* ================= TASK 2 : GAP FILL ================= */
+(function(){
+  const container=document.getElementById('gapList');
+  const selects=[];
+
+  ACTIVE.forEach((it,i)=>{
+    const wrongPool=shuffle(ACTIVE.map(v=>v.w).filter(w=>w!==it.w)).slice(0,3);
+    const options=shuffle([it.w,...wrongPool]);
+    const div=document.createElement('div');
+    div.className='gap-item';
+    const [before,after]=it.gap.split('{b}');
+    const select=document.createElement('select');
+    select.innerHTML='<option value="">— choose —</option>'+options.map(o=>`<option value="${o}">${o}</option>`).join('');
+    div.appendChild(document.createTextNode(before));
+    div.appendChild(select);
+    div.appendChild(document.createTextNode(after));
+    const hint=document.createElement('span');
+    hint.className='gap-hint'; hint.style.display='none';
+    div.appendChild(hint);
+    container.appendChild(div);
+    selects.push({select,answer:it.w,hint});
+  });
+
+  document.getElementById('checkGap').addEventListener('click',()=>{
+    let correct=0;
+    selects.forEach(o=>{
+      o.select.classList.remove('correct','wrong');
+      if(o.select.value===o.answer){
+        o.select.classList.add('correct'); correct++;
+        o.hint.style.display='none';
+      } else {
+        o.select.classList.add('wrong');
+        o.hint.textContent='Correct answer: '+o.answer;
+        o.hint.style.display='block';
+      }
+    });
+    updateScore(2,correct);
+  });
+})();
+
+/* ================= TASK 3 : DRAG & DROP ================= */
+(function(){
+  const bank=document.getElementById('bank3');
+  const sentWrap=document.getElementById('dd-sentences');
+  const tokenWords=shuffle(ACTIVE.map(it=>it.w));
+  const tokenEls={};
+  let selectedToken=null;
+
+  tokenWords.forEach(w=>{
+    const t=document.createElement('div');
+    t.className='token'; t.textContent=w; t.dataset.word=w;
+    t.addEventListener('click',()=>{
+      if(t.classList.contains('placed'))return;
+      document.querySelectorAll('.token').forEach(x=>x.classList.remove('selected'));
+      t.classList.add('selected'); selectedToken=t;
+    });
+    bank.appendChild(t);
+    tokenEls[w]=t;
+  });
+
+  const blanks=[];
+  ACTIVE.forEach((it,i)=>{
+    const div=document.createElement('div');
+    div.className='dd-sentence';
+    const [before,after]=it.dd.split('{b}');
+    const blank=document.createElement('span');
+    blank.className='blank'; blank.dataset.answer=it.w; blank.dataset.idx=i;
+    blank.textContent='drop here';
+    blank.addEventListener('click',()=>{
+      if(!selectedToken || blank.classList.contains('filled'))return;
+      placeToken(selectedToken, blank);
+    });
+    div.appendChild(document.createTextNode(before));
+    div.appendChild(blank);
+    div.appendChild(document.createTextNode(after));
+    sentWrap.appendChild(div);
+    blanks.push(blank);
+  });
+
+  function placeToken(token, blank){
+    if(blank.dataset.current){
+      const prev=tokenEls[blank.dataset.current];
+      prev.classList.remove('placed');
+    }
+    blank.textContent=token.dataset.word;
+    blank.classList.add('filled');
+    blank.dataset.current=token.dataset.word;
+    token.classList.add('placed'); token.classList.remove('selected');
+    selectedToken=null;
+  }
+
+  let dragEl=null, dragWord=null, offsetX=0, offsetY=0;
+  bank.addEventListener('pointerdown', startDrag);
+  function startDrag(e){
+    const t=e.target.closest('.token');
+    if(!t || t.classList.contains('placed'))return;
+    dragWord=t.dataset.word;
+    dragEl=t.cloneNode(true);
+    dragEl.classList.add('dragging');
+    document.body.appendChild(dragEl);
+    const rect=t.getBoundingClientRect();
+    offsetX=e.clientX-rect.left; offsetY=e.clientY-rect.top;
+    moveDrag(e);
+    document.addEventListener('pointermove', moveDrag);
+    document.addEventListener('pointerup', endDrag);
+  }
+  function moveDrag(e){
+    if(!dragEl)return;
+    dragEl.style.left=(e.clientX-offsetX)+'px';
+    dragEl.style.top=(e.clientY-offsetY)+'px';
+    blanks.forEach(b=>b.classList.remove('target'));
+    const el=document.elementFromPoint(e.clientX,e.clientY);
+    const blank=el && el.closest ? el.closest('.blank') : null;
+    if(blank && !blank.classList.contains('filled')) blank.classList.add('target');
+  }
+  function endDrag(e){
+    document.removeEventListener('pointermove', moveDrag);
+    document.removeEventListener('pointerup', endDrag);
+    if(!dragEl)return;
+    const el=document.elementFromPoint(e.clientX,e.clientY);
+    const blank=el && el.closest ? el.closest('.blank') : null;
+    if(blank && !blank.classList.contains('filled')){
+      placeToken(tokenEls[dragWord], blank);
+    }
+    blanks.forEach(b=>b.classList.remove('target'));
+    dragEl.remove(); dragEl=null; dragWord=null;
+  }
+
+  document.getElementById('checkDD').addEventListener('click',()=>{
+    let correct=0;
+    blanks.forEach(b=>{
+      b.classList.remove('correct','wrong');
+      if(b.dataset.current===b.dataset.answer){
+        b.classList.add('correct'); correct++;
+      } else {
+        b.classList.add('wrong');
+      }
+    });
+    updateScore(3,correct);
+  });
+})();
+
+/* ================= TASK 4 : FIND THE MISTAKE ================= */
+(function(){
+  const container=document.getElementById('mistakeList');
+  let solved=0;
+
+  ACTIVE.forEach(it=>{
+    const div=document.createElement('div');
+    div.className='mistake-sentence';
+    const words=it.mistake.split(' ');
+    let solvedThis=false;
+    words.forEach(rawWord=>{
+      const clean=rawWord.replace(/[.,!?]/g,'').toLowerCase();
+      const span=document.createElement('span');
+      span.className='w'; span.textContent=rawWord+' ';
+      span.addEventListener('click',()=>{
+        if(solvedThis)return;
+        if(clean===it.wrong.toLowerCase()){
+          span.classList.add('right-pick');
+          const corr=document.createElement('div');
+          corr.className='correction';
+          corr.style.display='block';
+          corr.textContent='✓ Correct word: "'+it.w+'"';
+          div.appendChild(corr);
+          div.classList.add('done');
+          solvedThis=true; solved++; updateScore(4,solved);
+        } else {
+          span.classList.add('wrong-pick');
+          setTimeout(()=>span.classList.remove('wrong-pick'),450);
+        }
+      });
+      div.appendChild(span);
+    });
+    container.appendChild(div);
+  });
+})();
+</script>
+</body>
+</html>
+<script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="6ff31f93-ef5d-46c9-9e44-b1d75df694ca" data-app-host="app.netlify.com" data-account-tier="free"></script>

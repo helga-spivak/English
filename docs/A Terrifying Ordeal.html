@@ -1,0 +1,600 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>A Terrifying Ordeal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:wght@600;800&display=swap">
+<style>
+/* Layout: one-column worksheet; four numbered tasks in true sequence; the closing words of the title fade out like a list that carries on. */
+:root{
+  --bg:#EDF1F5;
+  --surface:#FFFFFF;
+  --ink:#12212F;
+  --muted:#566878;
+  --line:#D2DBE4;
+  --accent:#2D4FD0;
+  --accent-ink:#FFFFFF;
+  --accent-soft:#E4EAFB;
+  --good:#17794D;
+  --good-soft:#DCF2E7;
+  --bad:#B3302A;
+  --bad-soft:#FBE3E0;
+  --font-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --font-body:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1822;--surface:#15222E;--ink:#E7EEF4;--muted:#9FB1C1;--line:#2A3B4A;
+    --accent:#8FA7FF;--accent-ink:#0E1822;--accent-soft:#1E2B4A;
+    --good:#5CD49C;--good-soft:#12362A;--bad:#FF908A;--bad-soft:#40201E;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1822;--surface:#15222E;--ink:#E7EEF4;--muted:#9FB1C1;--line:#2A3B4A;
+  --accent:#8FA7FF;--accent-ink:#0E1822;--accent-soft:#1E2B4A;
+  --good:#5CD49C;--good-soft:#12362A;--bad:#FF908A;--bad-soft:#40201E;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--font-body);font-size:17px;line-height:1.5;
+  padding-block:28px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  -webkit-text-size-adjust:100%;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+body.dragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto}
+
+/* header */
+.eyebrow{margin:0 0 .6rem;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+h1{margin:0 0 .8rem;font-family:var(--font-display);font-weight:800;font-size:clamp(2.3rem,8.5vw,3.6rem);line-height:1.02;letter-spacing:-.02em;text-wrap:balance}
+.fadeword{display:inline-block;color:var(--accent);
+  -webkit-mask-image:linear-gradient(90deg,#000 12%,rgba(0,0,0,.22) 100%);
+  mask-image:linear-gradient(90deg,#000 12%,rgba(0,0,0,.22) 100%)}
+.lede{margin:0;max-width:60ch;color:var(--muted)}
+.progress{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:1.3rem}
+.seg{display:flex;flex-direction:column;gap:6px;font-size:.8rem;color:var(--muted)}
+.seg i{display:block;height:6px;border-radius:3px;background:var(--line)}
+.seg.done{color:var(--ink)}
+.seg.done i{background:var(--accent)}
+
+/* task cards */
+.task{--pad:20px;margin-top:20px;padding:var(--pad);background:var(--surface);border:1px solid var(--line);border-radius:16px}
+@media (max-width:520px){.task,.results{--pad:14px}}
+.th{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;margin-bottom:1rem}
+.tn{min-width:1.1ch;font-family:var(--font-display);font-weight:800;font-size:2.2rem;line-height:1;color:var(--accent)}
+h2{margin:.1rem 0 .25rem;font-family:var(--font-display);font-weight:600;font-size:1.2rem;line-height:1.25;text-wrap:balance}
+.ins{margin:0;color:var(--muted);font-size:.95rem}
+.tscore{padding-top:.2rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent);white-space:nowrap}
+.lab{margin:0 0 .4rem;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.muted{color:var(--muted)}
+
+/* sticky word bank (tasks 1 and 3) */
+.bank{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;margin:0 calc(var(--pad)*-1) 12px;padding:10px var(--pad);background:var(--surface);border-block:1px solid var(--line)}
+.bank.over{outline:2px dashed var(--accent);outline-offset:-4px}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.empty-note{color:var(--muted);font-size:.95rem}
+
+/* buttons */
+.btn{min-height:44px;padding:.6rem 1.1rem;font:inherit;font-weight:700;color:var(--accent-ink);background:var(--accent);border:1.5px solid var(--accent);border-radius:10px;cursor:pointer}
+.btn.ghost{color:var(--accent);background:transparent}
+.btn:disabled{opacity:.45;cursor:default}
+.foot{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem 1rem;margin-top:1.2rem}
+.score{font-weight:700;font-variant-numeric:tabular-nums}
+
+/* task 1 */
+.pairs{display:grid;gap:.5rem;margin:0 0 1rem;padding:0;list-style:none}
+.pair{display:grid;gap:.15rem .9rem;padding:.65rem .85rem;background:var(--good-soft);border:1px solid var(--good);border-radius:10px}
+@media (min-width:560px){.pair{grid-template-columns:9.5rem minmax(0,1fr)}}
+.pair b::before{content:"✓ ";color:var(--good)}
+.term{min-height:40px;padding:.4rem .75rem;font:inherit;font-weight:700;color:var(--accent);background:var(--surface);border:1.5px solid var(--accent);border-radius:8px;cursor:pointer}
+.term[aria-pressed="true"]{color:var(--accent-ink);background:var(--accent)}
+.defs{display:grid;gap:.5rem;margin:0;padding:0;list-style:none}
+.def{display:block;width:100%;min-height:44px;padding:.7rem .85rem;text-align:left;font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;cursor:pointer}
+.def:hover{border-color:var(--accent)}
+.def.bad{border-color:var(--bad);background:var(--bad-soft);animation:shake .4s}
+@keyframes shake{20%{transform:translateX(-5px)}50%{transform:translateX(5px)}80%{transform:translateX(-3px)}}
+.status{min-height:1.4em;margin:.8rem 0 0;color:var(--muted);font-size:.95rem}
+
+/* numbered sentence lists (tasks 2-4) */
+.qs{display:grid;gap:1.1rem;margin:0;padding:0;list-style:none}
+.q{display:grid;grid-template-columns:1.6rem minmax(0,1fr);gap:.7rem}
+.qn{padding-top:.15rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--muted)}
+.qb{min-width:0}
+.sent{margin:0;line-height:2.2}
+select.gap{max-width:100%;min-height:40px;padding:.3rem .5rem;font:inherit;font-weight:700;color:var(--ink);background:var(--bg);border:1.5px solid var(--accent);border-radius:8px}
+select.gap.ok{border-color:var(--good);background:var(--good-soft)}
+select.gap.no{border-color:var(--bad);background:var(--bad-soft)}
+.mark{font-weight:700}
+.mark.ok{color:var(--good)}
+.mark.no{color:var(--bad)}
+.fb{margin:.2rem 0 0;font-size:.95rem}
+.fb.ok{color:var(--good)}
+.fb.no{color:var(--bad)}
+
+/* task 3 */
+.chip{min-height:38px;padding:.3rem .7rem;font:inherit;font-weight:700;color:var(--accent-ink);background:var(--accent);border:1.5px solid var(--accent);border-radius:8px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.chip.sel{outline:3px solid var(--ink);outline-offset:2px}
+.chip.lifted{opacity:.3}
+.chip.ghost{position:fixed;z-index:100;margin:0;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.3);transform:scale(1.05)}
+.slot{display:inline-flex;align-items:center;gap:.35rem;min-width:8rem;min-height:42px;margin-inline:.15rem;padding:2px;vertical-align:middle;border-radius:8px}
+.slot.empty{border:2px dashed var(--accent)}
+.slot.empty.over,.slot.filled.over{background:var(--accent-soft)}
+.slot.ok .chip{color:var(--ink);background:var(--good-soft);border-color:var(--good)}
+.slot.no .chip{color:var(--ink);background:var(--bad-soft);border-color:var(--bad)}
+
+/* task 4 */
+.toks{display:flex;flex-wrap:wrap;gap:.15rem .3rem;margin:0}
+.tok{min-height:36px;padding:.2rem .15rem;font:inherit;color:inherit;background:none;border:0;border-bottom:2px dotted var(--line);border-radius:4px 4px 0 0;cursor:pointer}
+.tok:hover{background:var(--accent-soft)}
+.tok.on{font-weight:700;background:var(--accent-soft);border-bottom:2px solid var(--accent)}
+.tok:disabled{color:inherit;cursor:default;opacity:1}
+.tok.isErr{background:var(--good-soft);border-bottom:2px solid var(--good)}
+.tok.badSel{background:var(--bad-soft);text-decoration:line-through}
+.hintline{margin:.3rem 0 0;color:var(--muted);font-size:.95rem}
+.fixrow{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .6rem;margin-top:.4rem}
+.fixrow label{font-size:.95rem;color:var(--muted)}
+.fixrow input{width:min(100%,14rem);min-height:44px;padding:.5rem .7rem;font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--accent);border-radius:8px}
+.fixed{margin:.2rem 0 0;font-size:.95rem;color:var(--muted)}
+
+/* results */
+.results{--pad:20px;margin-top:20px;padding:var(--pad);background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.big{margin:.2rem 0 .4rem;font-family:var(--font-display);font-weight:800;font-size:clamp(3rem,14vw,4.6rem);line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.big small{font-size:.4em;font-weight:600;color:var(--muted)}
+.brk{margin:1rem 0;padding:0;list-style:none}
+.brk li{display:flex;justify-content:space-between;gap:1rem;padding:.45rem 0;border-bottom:1px solid var(--line)}
+.brk b{font-variant-numeric:tabular-nums}
+.review{display:grid;gap:.5rem;margin:.4rem 0 1rem;padding:0;list-style:none}
+.review li{padding:.55rem .75rem;background:var(--bg);border-radius:8px}
+.review b{display:block}
+.review span{color:var(--muted);font-size:.95rem}
+.actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
+.term,.chip{max-width:100%;text-align:left}
+@media (max-width:520px){.term,.chip{font-size:.9rem;padding:.3rem .55rem;min-height:36px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">B2+ · News vocabulary</p>
+    <h1>A terrifying ordeal <span class="fadeword">and more</span></h1>
+    <p class="lede">Four short tasks on eight phrases, drawn at random from a pool of ten. Each task checks itself, and your total score appears at the end.</p>
+    <div class="progress" role="list" aria-label="Task progress">
+      <div class="seg" id="pg1" role="listitem"><i></i>Match</div>
+      <div class="seg" id="pg2" role="listitem"><i></i>Gap-fill</div>
+      <div class="seg" id="pg3" role="listitem"><i></i>Drag &amp; drop</div>
+      <div class="seg" id="pg4" role="listitem"><i></i>Mistakes</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="task" id="t1">
+      <div class="th"><span class="tn">1</span>
+        <div><h2>Match the phrases with the definitions</h2><p class="ins">Tap a phrase, then tap the definition that fits. Correct pairs move to the top.</p></div>
+        <span class="tscore" id="s1"></span></div>
+      <div id="b1"></div>
+    </section>
+
+    <section class="task" id="t2">
+      <div class="th"><span class="tn">2</span>
+        <div><h2>Choose the correct phrase</h2><p class="ins">Pick the phrase that fits each gap. Verb phrases are shown in the form the sentence needs.</p></div>
+        <span class="tscore" id="s2"></span></div>
+      <div id="b2"></div>
+    </section>
+
+    <section class="task" id="t3">
+      <div class="th"><span class="tn">3</span>
+        <div><h2>Drag the phrases into the sentences</h2><p class="ins">Drag a phrase into a gap, or tap a phrase and then tap a gap. Verb phrases change to the right form automatically. Tap a placed phrase to take it back.</p></div>
+        <span class="tscore" id="s3"></span></div>
+      <div id="b3"></div>
+    </section>
+
+    <section class="task" id="t4">
+      <div class="th"><span class="tn">4</span>
+        <div><h2>Find the mistakes</h2><p class="ins">Each sentence has one wrong word. Tap it, then type the word that should be there.</p></div>
+        <span class="tscore" id="s4"></span></div>
+      <div id="b4"></div>
+    </section>
+
+    <section class="results" id="res" aria-live="polite"></section>
+  </main>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+const POOL=[
+{id:'go',t:'go through an ordeal',grp:'ordealv',
+ f:{base:'go through an ordeal',s:'goes through an ordeal',ing:'going through an ordeal',past:'went through an ordeal',pp:'gone through an ordeal'},
+ def:`to experience a very difficult, painful or frightening situation`,
+ gap:{s:`The missing hikers ___ that lasted three nights in freezing weather.`,f:'past'},
+ drag:{s:`No child should ever have to ___ like the one this family has faced.`,f:'base'},
+ err:`She has {{go|gone}} through an ordeal that nobody should have to face.`},
+{id:'terrifying',t:'a terrifying ordeal',
+ f:{base:'a terrifying ordeal',s:'a terrifying ordeal',ing:'a terrifying ordeal',past:'a terrifying ordeal',pp:'a terrifying ordeal'},
+ def:`an experience that is extremely frightening and hard to bear`,
+ gap:{s:`Her journey home through the storm was ___.`,f:'base'},
+ drag:{s:`The witness described that night as ___ that she will never forget.`,f:'base'},
+ err:`It was {{an|a}} terrifying ordeal for the whole family.`},
+{id:'survive',t:'survive an ordeal',grp:'ordealv',
+ f:{base:'survive an ordeal',s:'survives an ordeal',ing:'surviving an ordeal',past:'survived an ordeal',pp:'survived an ordeal'},
+ def:`to stay alive, or to cope, after a very dangerous or difficult experience`,
+ gap:{s:`Very few people could have ___ like that and then spoken so calmly about it.`,f:'pp'},
+ drag:{s:`Everyone on the boat ___ and was rescued after nine days at sea.`,f:'past'},
+ err:`He was lucky to {{survived|survive}} an ordeal that killed others.`},
+{id:'toll',t:'take a toll on someone’s mental health',
+ f:{base:'take a toll on',s:'takes a toll on',ing:'taking a toll on',past:'took a toll on',pp:'taken a toll on'},
+ def:`to cause gradual harm to a person’s emotions and ability to cope`,
+ gap:{s:`Years of waiting for the verdict ___ his mental health.`,f:'past'},
+ drag:{s:`Long periods in isolation can ___ prisoners’ mental health.`,f:'base'},
+ err:`The long trial took a toll {{in|on}} her mental health.`},
+{id:'lethal',t:'lethal injection',
+ f:{base:'lethal injection',s:'lethal injection',ing:'lethal injection',past:'lethal injection',pp:'lethal injection'},
+ def:`a method of putting a prisoner to death by injecting drugs into the body`,
+ gap:{s:`In several US states, the death penalty is carried out by ___.`,f:'base'},
+ drag:{s:`Opponents of the death penalty are campaigning to ban ___ in the state.`,f:'base'},
+ err:`He was sentenced to die by lethal {{injecting|injection}}.`},
+{id:'clot',t:'blood clot',
+ f:{base:'blood clot',s:'blood clot',ing:'blood clot',past:'blood clot',pp:'blood clot'},
+ def:`a semi-solid lump that forms in a vein or artery and can block the flow`,
+ gap:{s:`The doctors removed the ___ from his leg.`,f:'base'},
+ drag:{s:`The surgeon said the ___ had blocked an artery near his heart.`,f:'base'},
+ err:`Doctors found a blood {{clock|clot}} in his leg.`},
+{id:'unconscious',t:'remain unconscious',
+ f:{base:'remain unconscious',s:'remains unconscious',ing:'remaining unconscious',past:'remained unconscious',pp:'remained unconscious'},
+ def:`to stay in a state where you are not awake and cannot see, hear or feel anything`,
+ gap:{s:`The driver was breathing but ___ and did not respond when paramedics spoke to him.`,f:'past'},
+ drag:{s:`Doctors say it is normal for patients to ___ for a few hours after surgery.`,f:'base'},
+ err:`The woman {{remain|remained}} unconscious until the ambulance arrived.`},
+{id:'botched',t:'botched execution',
+ f:{base:'botched execution',s:'botched execution',ing:'botched execution',past:'botched execution',pp:'botched execution'},
+ def:`a punishment by death that goes wrong because of mistakes or problems`,
+ gap:{s:`The governor ordered an investigation into the ___ after the equipment failed.`,f:'base'},
+ drag:{s:`Several newspapers condemned the ___ and demanded changes to the law.`,f:'base'},
+ err:`The {{botch|botched}} execution caused public outrage.`},
+{id:'swollen',t:'tremendously swollen',
+ f:{base:'tremendously swollen',s:'tremendously swollen',ing:'tremendously swollen',past:'tremendously swollen',pp:'tremendously swollen'},
+ def:`much bigger than normal, to an extreme degree, because of injury or fluid`,
+ gap:{s:`After the fall, her ankle was ___ and she could not walk.`,f:'base'},
+ drag:{s:`His face was ___ and covered in bruises.`,f:'base'},
+ err:`Her knee was tremendously {{swelling|swollen}} after the accident.`},
+{id:'hearing',t:'emergency hearing',
+ f:{base:'emergency hearing',s:'emergency hearing',ing:'emergency hearing',past:'emergency hearing',pp:'emergency hearing'},
+ def:`an urgent court session held at very short notice so that a decision can be made quickly`,
+ gap:{s:`The judge agreed to hold the ___ late on Friday evening.`,f:'base'},
+ drag:{s:`The prisoner’s lawyers requested the ___ to challenge the decision.`,f:'base'},
+ err:`The court called an {{emergence|emergency}} hearing on Friday.`}
+];
+/*DATA_END*/
+
+const N=8;
+const $=(s,r)=>(r||document).querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const norm=s=>String(s||'').trim().toLowerCase().replace(/[.,!?;:"“”‘’']/g,'').replace(/\s+/g,' ');
+const bare=w=>w.replace(/^[“"‘']+|[.,!?;:"”’]+$/g,'');
+const reduce=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+function parseErr(s){
+  const m=s.match(/\{\{([^|]+)\|([^}]+)\}\}(\S*)/);
+  const before=s.slice(0,m.index).trim().split(/\s+/).filter(Boolean);
+  const after=s.slice(m.index+m[0].length).trim().split(/\s+/).filter(Boolean);
+  const alts=m[2].split('/');
+  return {toks:[...before,m[1]+m[3],...after],idx:before.length,wrong:m[1],right:alts[0],alts,trail:m[3]};
+}
+POOL.forEach(p=>{p.e=parseErr(p.err)});
+const byId=Object.fromEntries(POOL.map(p=>[p.id,p]));
+
+let R=null;
+
+/* two verbs from the same meaning group never share a round, so every sentence has one best answer */
+function pickSet(){
+  const used=new Set(),out=[];
+  for(const p of shuffle(POOL)){
+    if(p.grp&&used.has(p.grp))continue;
+    if(p.grp)used.add(p.grp);
+    out.push(p.id);
+    if(out.length===N)break;
+  }
+  return out;
+}
+
+function newRound(ids){
+  const set=ids||pickSet();
+  R={set,
+    t1:{terms:shuffle(set),defs:shuffle(set),matched:[],sel:null,missed:new Set(),done:false,msg:'',bad:null,tm:0},
+    t2:{order:shuffle(set),ans:{},checked:false},
+    t3:{order:shuffle(set),bank:shuffle(set),placed:Array(N).fill(null),sel:null,checked:false},
+    t4:{order:shuffle(set),sel:{},val:{},checked:false}};
+  r1();r2();r3();r4();updateResults();
+}
+
+function foot(n,checked,sc){
+  return `<div class="foot"><button type="button" class="btn" data-check="${n}"${checked?' disabled':''}>Check answers</button><span class="score">${checked?`Score: ${sc}/${N}`:''}</span></div>`;
+}
+
+/* ---------- scoring ---------- */
+const score2=()=>R.t2.order.filter((id,i)=>R.t2.ans[i]===id).length;
+const score3=()=>R.t3.order.filter((id,i)=>R.t3.placed[i]===id).length;
+function ok4(id,i){const e=byId[id].e;return R.t4.sel[i]===e.idx&&e.alts.some(a=>norm(a)===norm(R.t4.val[i]))}
+const score4=()=>R.t4.order.filter((id,i)=>ok4(id,i)).length;
+
+/* ---------- task 1: match ---------- */
+function r1(){
+  const T=R.t1,el=$('#b1');
+  const left=id=>!T.matched.includes(id);
+  const pairs=T.matched.length?`<ul class="pairs">${T.matched.map(id=>`<li class="pair"><b>${esc(byId[id].t)}</b><span>${esc(byId[id].def)}</span></li>`).join('')}</ul>`:'';
+  let body;
+  if(T.done){
+    body=`<p class="status">All eight matched. You got ${N-T.missed.size} of ${N} on the first try.</p>`;
+  }else{
+    body=`<div class="bank"><p class="lab">Phrases</p><div class="chips">${T.terms.filter(left).map(id=>`<button type="button" class="term" data-id="${id}" aria-pressed="${T.sel===id}">${esc(byId[id].t)}</button>`).join('')}</div></div>
+<p class="lab">Definitions</p>
+<ol class="defs">${T.defs.filter(left).map(id=>`<li><button type="button" class="def${T.bad===id?' bad':''}" data-id="${id}">${esc(byId[id].def)}</button></li>`).join('')}</ol>
+<p class="status" role="status">${esc(T.msg)}</p>`;
+  }
+  el.innerHTML=pairs+body;
+}
+$('#b1').addEventListener('click',e=>{
+  const T=R.t1;if(T.done)return;
+  const tb=e.target.closest('.term');
+  if(tb){
+    T.sel=T.sel===tb.dataset.id?null:tb.dataset.id;
+    T.msg=T.sel?`Selected: ${byId[T.sel].t}. Now tap its definition.`:'';
+    r1();return;
+  }
+  const db=e.target.closest('.def');
+  if(!db)return;
+  if(!T.sel){T.msg='Tap a phrasal verb first, then its definition.';r1();return}
+  if(db.dataset.id===T.sel){
+    T.matched.unshift(T.sel);T.sel=null;T.msg='';T.bad=null;
+    if(T.matched.length===N)T.done=true;
+    r1();updateResults();
+  }else{
+    T.missed.add(T.sel);T.bad=db.dataset.id;T.msg='Not that one. Try another definition.';
+    r1();
+    clearTimeout(T.tm);
+    T.tm=setTimeout(()=>{T.bad=null;if(R&&R.t1===T&&!T.done)r1()},650);
+  }
+});
+
+/* ---------- task 2: dropdown gap-fill ---------- */
+function r2(){
+  const T=R.t2,el=$('#b2');
+  const items=T.order.map((id,i)=>{
+    const p=byId[id],g=p.gap,parts=g.s.split('___');
+    const opts=R.set.slice().sort((a,b)=>byId[a].f[g.f].localeCompare(byId[b].f[g.f]));
+    const cur=T.ans[i]||'';
+    let cls='',mark='',fb='';
+    if(T.checked){
+      const ok=cur===id;
+      cls=ok?' ok':' no';
+      mark=ok?'<span class="mark ok"> ✓</span>':'<span class="mark no"> ✗</span>';
+      if(!ok)fb=`<p class="fb no">Answer: <b>${esc(p.f[g.f])}</b></p>`;
+    }
+    return `<li class="q"><span class="qn">${i+1}</span><div class="qb"><p class="sent">${esc(parts[0])}<select id="g2-${i}" class="gap${cls}" data-i="${i}" aria-label="Gap ${i+1}"${T.checked?' disabled':''}><option value="">choose…</option>${opts.map(o=>`<option value="${o}"${cur===o?' selected':''}>${esc(byId[o].f[g.f])}</option>`).join('')}</select>${mark}${esc(parts[1])}</p>${fb}</div></li>`;
+  }).join('');
+  el.innerHTML=`<ol class="qs">${items}</ol>${foot(2,T.checked,T.checked?score2():0)}`;
+}
+$('#b2').addEventListener('change',e=>{
+  if(e.target.matches('select.gap'))R.t2.ans[+e.target.dataset.i]=e.target.value;
+});
+
+/* ---------- task 3: drag and drop (Pointer Events) ---------- */
+function r3(){
+  const T=R.t3,el=$('#b3');
+  const unplaced=T.bank.filter(id=>!T.placed.includes(id));
+  const bank=`<div class="bank" data-zone="bank"><p class="lab">Phrases</p><div class="chips">${
+    unplaced.length?unplaced.map(id=>`<button type="button" class="chip${T.sel===id?' sel':''}" data-id="${id}"${T.checked?' disabled':''}>${esc(byId[id].t)}</button>`).join('')
+    :`<span class="empty-note">${T.checked?'Checked.':'All placed. Check your answers below.'}</span>`}</div></div>`;
+  const rows=T.order.map((id,i)=>{
+    const p=byId[id],g=p.drag,parts=g.s.split('___'),pid=T.placed[i];
+    let slot,fb='';
+    if(pid){
+      let cls='',mark='';
+      if(T.checked){
+        const ok=pid===id;
+        cls=ok?' ok':' no';
+        mark=ok?'<span class="mark ok">✓</span>':'<span class="mark no">✗</span>';
+        if(!ok)fb=`<p class="fb no">Answer: <b>${esc(p.f[g.f])}</b></p>`;
+      }
+      slot=`<span class="slot filled${cls}" data-slot="${i}"><button type="button" class="chip" data-id="${pid}" data-slot="${i}"${T.checked?' disabled':''}>${esc(byId[pid].f[g.f])}</button>${mark}</span>`;
+    }else{
+      if(T.checked)fb=`<p class="fb no">Answer: <b>${esc(p.f[g.f])}</b></p>`;
+      slot=`<span class="slot empty${T.checked?' no':''}" data-slot="${i}" role="button" tabindex="0" aria-label="Gap ${i+1}"></span>`;
+    }
+    return `<li class="q"><span class="qn">${i+1}</span><div class="qb"><p class="sent">${esc(parts[0])}${slot}${esc(parts[1])}</p>${fb}</div></li>`;
+  }).join('');
+  el.innerHTML=`${bank}<ol class="qs">${rows}</ol>${foot(3,T.checked,T.checked?score3():0)}`;
+}
+function place(id,slot,from){
+  const T=R.t3;
+  if(from===slot)return;
+  const occ=T.placed[slot];
+  T.placed[slot]=id;
+  if(from!==null)T.placed[from]=(occ&&occ!==id)?occ:null;
+  if(T.sel===id)T.sel=null;
+}
+function tap3(id,from){
+  const T=R.t3;
+  if(from!==null){
+    if(T.sel)place(T.sel,from,null);else T.placed[from]=null;
+  }else{
+    T.sel=T.sel===id?null:id;
+  }
+  r3();
+}
+let drag=null;
+function dragCleanup(){
+  if(!drag)return;
+  window.removeEventListener('pointermove',onMove);
+  window.removeEventListener('pointerup',onUp);
+  window.removeEventListener('pointercancel',onCancel);
+  clearInterval(drag.timer);
+  if(drag.ghost)drag.ghost.remove();
+  if(drag.chip)drag.chip.classList.remove('lifted');
+  document.body.classList.remove('dragging');
+  document.querySelectorAll('#b3 .over').forEach(n=>n.classList.remove('over'));
+}
+function onMove(e){
+  if(!drag)return;
+  if(!drag.on){
+    if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<6)return;
+    drag.on=true;
+    const r=drag.chip.getBoundingClientRect();
+    const g=drag.chip.cloneNode(true);
+    g.className='chip ghost';g.removeAttribute('disabled');g.style.width=r.width+'px';
+    document.body.appendChild(g);
+    drag.ghost=g;drag.w=r.width;drag.h=r.height;
+    drag.chip.classList.add('lifted');
+    document.body.classList.add('dragging');
+    drag.timer=setInterval(()=>{if(drag&&drag.dir)window.scrollBy(0,drag.dir*14)},16);
+  }
+  drag.ghost.style.left=(e.clientX-drag.w/2)+'px';
+  drag.ghost.style.top=(e.clientY-drag.h-14)+'px';
+  drag.dir=e.clientY<70?-1:(e.clientY>window.innerHeight-70?1:0);
+  const under=document.elementFromPoint(e.clientX,e.clientY);
+  const zone=under&&under.closest('#b3 .slot,#b3 .bank');
+  if(zone!==drag.over){
+    if(drag.over)drag.over.classList.remove('over');
+    if(zone)zone.classList.add('over');
+    drag.over=zone;
+  }
+}
+function onUp(e){
+  const d=drag;if(!d)return;
+  const moved=d.on,x=e.clientX,y=e.clientY;
+  dragCleanup();drag=null;
+  if(!moved){tap3(d.id,d.from);return}
+  const under=document.elementFromPoint(x,y);
+  const slotEl=under&&under.closest('#b3 .slot');
+  if(slotEl)place(d.id,+slotEl.dataset.slot,d.from);
+  else if(d.from!==null)R.t3.placed[d.from]=null;
+  r3();
+}
+function onCancel(){dragCleanup();drag=null;r3()}
+$('#b3').addEventListener('pointerdown',e=>{
+  const T=R.t3;
+  if(T.checked||drag||(e.pointerType==='mouse'&&e.button!==0))return;
+  const chip=e.target.closest('.chip');
+  if(!chip)return;
+  e.preventDefault();
+  drag={chip,id:chip.dataset.id,from:chip.dataset.slot!==undefined?+chip.dataset.slot:null,x:e.clientX,y:e.clientY,on:false,ghost:null,over:null,dir:0,timer:0};
+  window.addEventListener('pointermove',onMove);
+  window.addEventListener('pointerup',onUp);
+  window.addEventListener('pointercancel',onCancel);
+});
+$('#b3').addEventListener('click',e=>{
+  const T=R.t3;
+  const s=e.target.closest('.slot.empty');
+  if(s&&T.sel&&!T.checked){place(T.sel,+s.dataset.slot,null);r3()}
+});
+$('#b3').addEventListener('keydown',e=>{
+  if(e.key!=='Enter'&&e.key!==' ')return;
+  const T=R.t3;if(T.checked)return;
+  const chip=e.target.closest('.chip');
+  if(chip){e.preventDefault();tap3(chip.dataset.id,chip.dataset.slot!==undefined?+chip.dataset.slot:null);return}
+  const s=e.target.closest('.slot.empty');
+  if(s&&T.sel){e.preventDefault();place(T.sel,+s.dataset.slot,null);r3()}
+});
+$('#b3').addEventListener('contextmenu',e=>{if(e.target.closest('.chip'))e.preventDefault()});
+
+/* ---------- task 4: find the mistakes ---------- */
+function itemHtml4(i){
+  const T=R.t4,id=T.order[i],e=byId[id].e,sel=T.sel[i],val=T.val[i]||'';
+  const ok=T.checked&&ok4(id,i);
+  const toks=e.toks.map((w,k)=>{
+    let c='tok'+(sel===k?' on':'');
+    if(T.checked){if(k===e.idx)c+=' isErr';else if(sel===k)c+=' badSel'}
+    return `<button type="button" class="${c}" data-i="${i}" data-k="${k}" aria-pressed="${sel===k}"${T.checked?' disabled':''}>${esc(w)}</button>`;
+  }).join('');
+  let fix='';
+  if(sel==null){
+    if(!T.checked)fix=`<p class="hintline">Tap the word you think is wrong.</p>`;
+  }else{
+    fix=`<div class="fixrow"><label for="fx-${i}">Replace “${esc(bare(e.toks[sel]))}” with</label><input id="fx-${i}" type="text" data-i="${i}" value="${esc(val)}" placeholder="correct word" autocomplete="off" autocapitalize="off" spellcheck="false"${T.checked?' disabled':''}></div>`;
+  }
+  let fb='';
+  if(T.checked){
+    const fixed=e.toks.map((w,k)=>k===e.idx?e.right+e.trail:w).join(' ');
+    fb=ok?`<p class="fb ok">✓ Correct. The mistake was “${esc(e.wrong)}”.</p>`
+         :`<p class="fb no">✗ The mistake was “${esc(e.wrong)}”. It should be “${esc(e.right)}”.</p>`;
+    fb+=`<p class="fixed">${esc(fixed)}</p>`;
+  }
+  return `<span class="qn">${i+1}</span><div class="qb"><div class="toks" role="group" aria-label="Sentence ${i+1}">${toks}</div>${fix}${fb}</div>`;
+}
+function r4(){
+  const T=R.t4,el=$('#b4');
+  el.innerHTML=`<ol class="qs">${T.order.map((id,i)=>`<li class="q" id="q4-${i}">${itemHtml4(i)}</li>`).join('')}</ol>${foot(4,T.checked,T.checked?score4():0)}`;
+}
+$('#b4').addEventListener('click',e=>{
+  const T=R.t4;if(T.checked)return;
+  const b=e.target.closest('.tok');if(!b)return;
+  const i=+b.dataset.i,k=+b.dataset.k;
+  if(T.sel[i]===k)delete T.sel[i];else T.sel[i]=k;
+  $('#q4-'+i).innerHTML=itemHtml4(i);
+  const inp=$('#fx-'+i);
+  if(inp)inp.focus({preventScroll:true});
+});
+$('#b4').addEventListener('input',e=>{
+  if(e.target.matches('input[data-i]'))R.t4.val[+e.target.dataset.i]=e.target.value;
+});
+
+/* ---------- checking and results ---------- */
+function checkTask(n){
+  R['t'+n].checked=true;
+  ({2:r2,3:r3,4:r4})[n]();
+  updateResults();
+}
+function weakIds(){
+  const s=new Set(R.t1.missed);
+  R.t2.order.forEach((id,i)=>{if(R.t2.ans[i]!==id)s.add(id)});
+  R.t3.order.forEach((id,i)=>{if(R.t3.placed[i]!==id)s.add(id)});
+  R.t4.order.forEach((id,i)=>{if(!ok4(id,i))s.add(id)});
+  return R.set.filter(id=>s.has(id));
+}
+function updateResults(){
+  const sc=[R.t1.done?N-R.t1.missed.size:null,R.t2.checked?score2():null,R.t3.checked?score3():null,R.t4.checked?score4():null];
+  sc.forEach((v,i)=>{
+    $('#s'+(i+1)).textContent=v==null?'':`${v}/${N}`;
+    $('#pg'+(i+1)).classList.toggle('done',v!=null);
+  });
+  const names=['Match the phrases','Gap-fill','Drag and drop','Find the mistakes'];
+  const rows=names.map((n,i)=>`<li><span>${n}</span><b>${sc[i]==null?'not finished':sc[i]+'/'+N}</b></li>`).join('');
+  const left=sc.filter(v=>v==null).length;
+  let html;
+  if(left){
+    html=`<h2>Your score</h2><p class="muted">Finish all four tasks to see your total. ${left===1?'One task is':left+' tasks are'} left.</p><ul class="brk">${rows}</ul>`;
+  }else{
+    const total=sc.reduce((a,b)=>a+b,0);
+    const msg=total>=29?'Excellent. These phrases are secure.'
+      :total>=23?'Good work. Look at the phrases below, then try a new set.'
+      :total>=15?'A decent start. Go through the phrases below and try again.'
+      :'These phrases need more practice. Go through the list below, then try again.';
+    const weak=weakIds();
+    const review=weak.length?`<p class="lab">Phrases to review</p><ul class="review">${weak.map(id=>`<li><b>${esc(byId[id].t)}</b><span>${esc(byId[id].def)}</span></li>`).join('')}</ul>`
+      :`<p class="muted">No slips. Every phrase was correct.</p>`;
+    html=`<h2>Your score</h2><p class="big">${total}<small> / ${N*4}</small></p><p>${msg}</p><ul class="brk">${rows}</ul>${review}`;
+  }
+  html+=`<div class="actions"><button type="button" class="btn" data-act="new">New set of 8</button><button type="button" class="btn ghost" data-act="retry">Retry this set</button></div>`;
+  $('#res').innerHTML=html;
+}
+document.addEventListener('click',e=>{
+  const c=e.target.closest('[data-check]');
+  if(c){checkTask(+c.dataset.check);return}
+  const a=e.target.closest('[data-act]');
+  if(a){
+    newRound(a.dataset.act==='retry'?R.set:null);
+    window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+  }
+});
+
+newRound();
+})();
+</script>
+
+</body></html>
